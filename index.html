@@ -3,324 +3,302 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Math Adventure! 🚀</title>
+<title>Math Adventure: The Complete Journey 🚀</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-/* (All your original CSS stays exactly the same - I kept it untouched for brevity) */
 :root {
-  --coral:   #ff6b6b;
-  --sky:     #4ecdc4;
-  --sun:     #ffe66d;
-  --mint:    #a8e6cf;
-  --lavender:#c3b1e1;
-  --peach:   #ffb347;
-  --bg:      #fff9f0;
-  --white:   #ffffff;
-  --dark:    #2d2d44;
-  --mid:     #5a5a7a;
-  --shadow:  rgba(45,45,68,0.15);
+  --coral: #ff6b6b; --sky: #4ecdc4; --sun: #ffe66d; --mint: #a8e6cf;
+  --lavender: #c3b1e1; --peach: #ffb347; --bg: #fff9f0; --white: #ffffff;
+  --dark: #2d2d44; --mid: #5a5a7a; --shadow: rgba(45,45,68,0.15);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  font-family: 'Nunito', sans-serif;
-  background: var(--bg);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* ... (your full original CSS goes here - I omitted it to save space, but keep everything from .bg-blob to the end of @media) ... */
-
-/* NEW: Intro styles */
-.intro-screen {
-  position: relative;
-  z-index: 2;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 20px 16px;
-  text-align: center;
-}
+body { font-family: 'Nunito', sans-serif; background: var(--bg); min-height: 100vh; padding: 20px; display: flex; justify-content: center; }
+.app { width: 100%; max-width: 850px; position: relative; z-index: 2; }
 
 .intro-card {
-  background: var(--white);
-  border-radius: 32px;
-  padding: 32px 28px;
-  box-shadow: 0 8px 40px var(--shadow);
-  margin-bottom: 30px;
-  border: 3px solid var(--sun);
-}
-
-.intro-title {
-  font-family: 'Fredoka One', cursive;
-  font-size: clamp(32px, 7vw, 48px);
-  color: var(--dark);
-  margin-bottom: 16px;
+  background: var(--white); border-radius: 32px; padding: 35px;
+  box-shadow: 0 8px 40px var(--shadow); margin-bottom: 30px; border: 3px solid var(--sun);
 }
 
 .example-box {
-  background: #f8f9ff;
-  border: 2px dashed #d0d8f0;
-  border-radius: 20px;
-  padding: 18px;
-  margin: 20px 0;
-  font-size: 28px;
-  line-height: 1.4;
+  background: #f8f9ff; border: 2px dashed #d0d8f0; border-radius: 20px;
+  padding: 20px; margin: 15px 0; font-size: 18px; line-height: 1.6; text-align: left; color: var(--dark);
 }
 
+/* WALKING VISUAL STYLES */
+.walking-container {
+  background: #fff; border-radius: 15px; padding: 20px; margin: 20px 0;
+  border: 2px solid #eee; position: relative; overflow: hidden;
+}
 .number-line {
-  height: 60px;
-  background: linear-gradient(to right, #ffe66d, #a8e6cf);
-  border-radius: 30px;
-  position: relative;
-  margin: 20px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  overflow: hidden;
+  height: 4px; background: #333; width: 90%; margin: 60px auto 30px;
+  position: relative; display: flex; justify-content: space-between;
+}
+.tick { width: 2px; height: 15px; background: #333; position: relative; }
+.tick::after {
+  content: attr(data-val); position: absolute; top: 20px; left: 50%;
+  transform: translateX(-50%); font-size: 12px; font-weight: bold;
 }
 
-.negative-zone {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 45%;
-  background: rgba(255,107,107,0.15);
-  border-right: 3px dashed var(--coral);
+/* BASE STATE: FORCED TO FACE RIGHT */
+#walker {
+  position: absolute; bottom: 10px; left: 50%; font-size: 40px;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+  transform: translateX(-50%) scaleX(-1); /* Reversed to face Right by default */
 }
+
+.step-desc { font-size: 1.1rem; color: var(--dark); margin-bottom: 10px; min-height: 60px; background: #fdfaff; padding: 10px; border-radius: 10px; border-left: 5px solid var(--sky); }
 
 .start-btn {
-  font-family: 'Fredoka One', cursive;
-  font-size: 24px;
-  padding: 18px 40px;
+  font-family: 'Fredoka One', cursive; font-size: 24px; padding: 18px 40px;
   background: linear-gradient(135deg, var(--coral), var(--peach));
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  box-shadow: 0 6px 0 #c94f4f;
-  margin-top: 20px;
+  color: white; border: none; border-radius: 20px; cursor: pointer;
+  box-shadow: 0 6px 0 #c94f4f; transition: 0.2s; margin-top: 20px;
 }
-
 .start-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 0 #c94f4f; }
+.start-btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; opacity: 0.6; }
+
+.sign-table {
+  width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 10px; overflow: hidden;
+}
+.sign-table td { padding: 10px; border: 1px solid #eee; text-align: center; font-weight: bold; }
+
+.pattern-container {
+  background: #fff; padding: 15px; border-radius: 10px; margin-top: 10px; border: 1px solid #ddd; text-align: center;
+}
+.pattern-row {
+  font-family: 'Courier New', monospace; font-size: 19px; padding: 6px; opacity: 0; transform: translateY(10px); transition: all 0.4s ease; height: 0; overflow: hidden;
+}
+.pattern-row.visible { opacity: 1; transform: translateY(0); height: auto; margin-bottom: 4px; }
+.reveal-btn {
+  background: var(--sky); color: white; border: none; padding: 10px 20px; border-radius: 12px; 
+  cursor: pointer; font-weight: bold; margin-bottom: 15px; font-size: 16px; box-shadow: 0 4px 0 #3ba39b;
+}
+.reveal-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #3ba39b; }
+
+.pos-result { color: #27ae60; font-weight: 800; }
+.neg-result { color: #e74c3c; }
+
+.summary-card {
+  background: #2d2d44; color: white; border-radius: 20px; padding: 25px; margin-top: 30px; text-align: left;
+}
+.summary-card h3 { color: var(--sun); margin-bottom: 10px; }
+.summary-card ul { list-style: none; }
+.summary-card li { margin-bottom: 8px; font-size: 17px; }
 </style>
 </head>
 <body>
 
-<!-- BACKGROUND (your original blobs + stars) -->
-<div class="bg-blob blob1"></div>
-<div class="bg-blob blob2"></div>
-<div class="bg-blob blob3"></div>
-<div class="stars" id="stars"></div>
-
 <div class="app">
-
-  <!-- INTRO / TUTORIAL SCREEN -->
-  <div id="introScreen" class="intro-screen">
-    <div class="header">
-      <h1>🧮 Math <span>Adventure!</span> 🚀</h1>
-    </div>
-
-    <div class="intro-card">
-      <h2 class="intro-title">Let's Learn First! 🎓</h2>
-
-      <h3 style="margin:20px 0 10px; color:var(--dark);">1. Same Things Only! 🍎</h3>
+  <div id="introScreen">
+    <div class="intro-card" style="text-align: center;">
+      <h1 style="font-family:'Fredoka One'; font-size: 3.5rem; margin-bottom: 15px;">🧮 Math Adventure</h1>
+      
       <div class="example-box">
-        ✅ <strong>Good:</strong> 3 apples + 2 apples = 5 apples<br>
-        ❌ <strong>Bad:</strong> 3 apples + 2 oranges = ? (We can't mix different things!)
+        <h3 style="color:var(--sky)">1. Addition (+) 🍎</h3>
+        Addition is joining two groups together.<br>
+        <strong>4 + 3 = 7</strong><br>
+        🍎🍎🍎🍎 + 🍎🍎🍎 = 🍎🍎🍎🍎🍎🍎🍎
       </div>
-      <div style="font-size:32px;margin:15px 0;">🍎🍎🍎 + 🍎🍎 = 🍎🍎🍎🍎🍎</div>
 
-      <h3 style="margin:30px 0 10px; color:var(--dark);">2. How Operations Work Visually</h3>
-
-      <!-- Addition Example -->
       <div class="example-box">
-        <strong>Addition (+)</strong><br>
-        4 + 3 = 7<br>
-        🍓🍓🍓🍓 + 🍓🍓🍓 = 🍓🍓🍓🍓🍓🍓🍓
+        <h3 style="color:var(--coral)">2. Subtraction (−) 🍌</h3>
+        Subtraction is "Taking Away" from a group.<br>
+        <strong>6 − 2 = 4</strong><br>
+        🍌🍌🍌🍌🍌🍌 (Start) → ❌❌ (Take) = 🍌🍌🍌🍌 (4 left!)
       </div>
 
-      <!-- Subtraction Example -->
       <div class="example-box">
-        <strong>Subtraction (−)</strong><br>
-        6 − 2 = 4<br>
-        🍌🍌🍌🍌🍌🍌 → take away 2 → 🍌🍌🍌🍌
+        <h3 style="color:var(--peach)">3. Multiplication (×) ⭐</h3>
+        Multiplication is adding the same group multiple times.<br>
+        <strong>3 × 4 = 12</strong> (3 rows of 4 stars)<br>
+        ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐
       </div>
 
-      <!-- Multiplication Example -->
       <div class="example-box">
-        <strong>Multiplication (×)</strong><br>
-        3 × 4 = 12<br>
-        3 rows of 4 stars each:<br>
-        ⭐⭐⭐⭐<br>
-        ⭐⭐⭐⭐<br>
-        ⭐⭐⭐⭐
+        <h3 style="color:var(--mid)">4. Division (÷) 🍬</h3>
+        Division is sharing a total into equal groups.<br>
+        <strong>12 ÷ 3 = 4</strong><br>
+        🍬🍬🍬🍬 | 🍬🍬🍬🍬 | 🍬🍬🍬🍬
       </div>
 
-      <!-- Division Example -->
-      <div class="example-box">
-        <strong>Division (÷)</strong><br>
-        12 ÷ 3 = 4<br>
-        Share 12 candies into 3 equal groups → 4 in each group
+      <div class="example-box" style="border-color: var(--lavender); background: #fdfaff;">
+        <h3 style="color:var(--lavender)">5. The Commutative Rule 🔄</h3>
+        Order doesn't change the answer for ➕ and ✖️!<br>
+        • <strong>4 + 3 = 7</strong> and <strong>3 + 4 = 7</strong>.
       </div>
 
-      <h3 style="margin:30px 0 10px; color:var(--dark);">3. Negative Numbers ❄️</h3>
-      <div class="number-line">
-        <div class="negative-zone"></div>
-        <span style="position:absolute;left:10%;color:var(--coral)">−3</span>
-        <span style="position:absolute;left:25%;color:var(--coral)">−2</span>
-        <span style="position:absolute;left:40%;color:var(--coral)">−1</span>
-        <span style="position:absolute;left:55%;">0</span>
-        <span style="position:absolute;left:70%;color:var(--sky)">1</span>
-        <span style="position:absolute;left:85%;color:var(--sky)">2</span>
-      </div>
-      <p style="margin:15px 0;font-size:18px;">
-        Negative numbers are like owing something or going left on a number line.<br>
-        Example: 5 + (−3) = 2  →  You have 5, then lose 3 → 2 left
-      </p>
-      <div style="font-size:32px;margin:15px 0;">
-        5 + (−3) = 2<br>
-        ⭐⭐⭐⭐⭐  ➖➖➖  = ⭐⭐
+      <div class="example-box" style="background: #fff5f5; border-color: var(--coral);">
+        <h3 style="color:var(--dark)">6. The Negative Secrets ❄️</h3>
+        
+        <p style="margin-top:15px; font-weight: bold;"><strong>Walking Rule Simulator: (-5) × (-3) = 15</strong></p>
+        <div class="walking-container">
+          <div id="walkText" class="step-desc">Initially, the person stands at the origin (0), facing Right (Positive).</div>
+          <div class="number-line">
+            <div class="tick" data-val="-15"></div><div class="tick" data-val="-10"></div><div class="tick" data-val="-5"></div>
+            <div class="tick" data-val="0"></div>
+            <div class="tick" data-val="5"></div><div class="tick" data-val="10"></div><div class="tick" data-val="15"></div>
+            <div id="walker">🚶‍♂️</div>
+          </div>
+          <button id="walkBtn" class="reveal-btn" onclick="nextWalkStep()">Step 1: Face -5 🚩</button>
+        </div>
+
+        <p style="margin-top:15px; font-weight: bold;"><strong>Interactive Discovery:</strong> Why does (-5) × (-3) = 15?</p>
+        <div class="pattern-container">
+            <button class="reveal-btn" id="revealBtn" onclick="revealNextPattern()">Click to Reveal the Pattern 🔍</button>
+            <div class="pattern-row" id="p1">(-5) × 2 = <span class="neg-result">-10</span></div>
+            <div class="pattern-row" id="p2">(-5) × 1 = <span class="neg-result">-5</span> (+5)</div>
+            <div class="pattern-row" id="p3">(-5) × 0 = <b>0</b> (+5)</div> 
+            <div class="pattern-row" id="p4">(-5) × (-1) = <span class="pos-result">5</span> (+5)</div>
+            <div class="pattern-row" id="p5">(-5) × (-2) = <span class="pos-result">10</span> (+5)</div>
+            <div class="pattern-row" id="p6">(-5) × (-3) = <span class="pos-result">15</span> (+5)</div>
+        </div>
+
+        <table class="sign-table">
+            <tr style="background:#f0f0f0;"><td>Combination</td><td>Result</td></tr>
+            <tr><td>Positive × Positive</td><td style="color:var(--sky)">Positive (+)</td></tr>
+            <tr><td>Positive × Negative</td><td style="color:var(--coral)">Negative (-)</td></tr>
+            <tr><td>Negative × Negative</td><td style="color:var(--sky)">Positive (+)</td></tr>
+        </table>
       </div>
 
-      <button class="start-btn" onclick="startQuiz()">🚀 Start the Math Adventure!</button>
+      <div class="summary-card">
+        <h3>🎯 Quick Summary</h3>
+        <ul>
+          <li>✅ <b>Same Signs:</b> Result is always <b>Positive</b>.</li>
+          <li>✅ <b>Different Signs:</b> Result is always <b>Negative</b>.</li>
+        </ul>
+      </div>
+
+      <button class="start-btn" id="quizStartBtn" onclick="startQuiz()" >🚀 Ready for a Quiz of 100 Questions?</button>
     </div>
   </div>
 
-  <!-- ORIGINAL QUIZ CONTENT (hidden at first) -->
-  <div id="quizContent" style="display:none;">
-    <!-- Your original header, score-bar, progress, operation-key, q-card, results - ALL YOUR ORIGINAL HTML GOES HERE -->
-    <!-- (Paste everything from <div class="header"> to the end of the results div) -->
-    
-    <!-- For brevity I'm not repeating the full 400+ lines here, but keep your entire original quiz markup inside this div -->
-  </div>
-
+  <div id="quizContent" style="display:none;"></div>
 </div>
 
 <script>
+let currentWalkStep = 0;
+function nextWalkStep() {
+  const walker = document.getElementById('walker');
+  const text = document.getElementById('walkText');
+  const btn = document.getElementById('walkBtn');
+  currentWalkStep++;
+
+  if (currentWalkStep === 1) {
+    text.innerHTML = "<b>Explanation of Step 1:</b> Since -5 has a negative sign, the person faces -5 (Left).";
+    walker.style.transform = "translateX(-50%) scaleX(1)"; // Flip to face Left
+    btn.innerHTML = "Step 2: Turn Right 🔄";
+  } else if (currentWalkStep === 2) {
+    text.innerHTML = "<b>Explanation of Step 2:</b> Since -3 has a negative sign, the person now turns Right.";
+    walker.style.transform = "translateX(-50%) scaleX(-1)"; // Flip back to face Right
+    btn.innerHTML = "Step 3: Move 🚶‍♂️";
+  } else if (currentWalkStep === 3) {
+    text.innerHTML = "<b>Explanation of Step 3:</b> The person moves 5 steps 3 times, arriving at <b>+15</b>!";
+    walker.style.left = "90%"; 
+    btn.innerHTML = "🔄 Reset Walk";
+  } else {
+    currentWalkStep = 0;
+    walker.style.left = "50%";
+    walker.style.transform = "translateX(-50%) scaleX(-1)"; // Reset to Right
+    text.innerHTML = "Initially, the person faces Right (Positive).";
+    btn.innerHTML = "Step 1: Face -5 🚩";
+  }
+}
+
+// REST OF THE CODE (FIXED AS REQUESTED)
+let patternStep = 0;
+function revealNextPattern() {
+    patternStep++;
+    const row = document.getElementById('p' + patternStep);
+    if (row) { row.classList.add('visible'); }
+    if (patternStep >= 6) {
+        document.getElementById('revealBtn').style.display = 'none';
+        const startBtn = document.getElementById('quizStartBtn');
+        startBtn.disabled = false;
+        startBtn.innerHTML = "🚀 Start 100 Challenges!";
+        startBtn.style.background = "linear-gradient(135deg, var(--mint), var(--sky))";
+    }
+}
+
 let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
 
-const VISUALS = {
-    '+': '🍎', '-': '🍌', '×': '⭐', '÷': '🍬'
-};
-
 function startQuiz() {
-    const intro = document.getElementById('introScreen');
-    const quiz = document.getElementById('quizContent');
-    
-    if(intro && quiz) {
-        intro.style.display = 'none';
-        quiz.style.display = 'block';
-        generateAllQuestions();
-        renderQuestion();
-    }
+    document.getElementById('introScreen').style.display = 'none';
+    document.getElementById('quizContent').style.display = 'block';
+    generateAllQuestions();
+    renderQuestion();
 }
 
 function generateAllQuestions() {
     questions = [];
-    const ops = ['+', '-', '×', '÷'];
+    const ops = ['+', '-', '×', '÷', 'neg'];
     for (let i = 0; i < 100; i++) {
-        let op = ops[Math.floor(Math.random() * ops.length)];
-        let a, b, ans;
-
-        if (op === '÷') {
-            ans = Math.floor(Math.random() * 9) + 1;
-            b = Math.floor(Math.random() * 5) + 1;
-            a = ans * b;
-        } else if (op === '×') {
-            a = Math.floor(Math.random() * 6) + 1; // Kept smaller for visual clarity
-            b = Math.floor(Math.random() * 5) + 1;
-            ans = a * b;
-        } else if (op === '-') {
-            a = Math.floor(Math.random() * 10) + 10;
-            b = Math.floor(Math.random() * 10) + 1;
-            ans = a - b;
+        let type = ops[Math.floor(Math.random() * ops.length)];
+        let a, b, ans, sym;
+        if (type === 'neg') {
+            let flip = Math.random();
+            if (flip < 0.2) { a = -3; b = -5; ans = -8; sym = '+'; }
+            else if (flip < 0.4) { a = -3; b = -5; ans = 2; sym = '-'; }
+            else if (flip < 0.6) { a = -4; b = -3; ans = 12; sym = '×'; }
+            else if (flip < 0.8) { a = -15; b = -5; ans = 3; sym = '÷'; }
+            else { a = -5; b = -3; ans = 15; sym = '×'; }
+        } else if (type === '÷') {
+            ans = Math.floor(Math.random() * 9) + 1; b = Math.floor(Math.random() * 5) + 1; a = ans * b; sym = '÷';
+        } else if (type === '×') {
+            a = Math.floor(Math.random() * 8) + 1; b = Math.floor(Math.random() * 5) + 1; ans = a * b; sym = '×';
+        } else if (type === '-') {
+            a = Math.floor(Math.random() * 20) + 5; b = Math.floor(Math.random() * a); ans = a - b; sym = '-';
         } else {
-            a = Math.floor(Math.random() * 10) + 1;
-            b = Math.floor(Math.random() * 10) + 1;
-            ans = a + b;
+            a = Math.floor(Math.random() * 20) + 1; b = Math.floor(Math.random() * 20) + 1; ans = a + b; sym = '+';
         }
-
-        questions.push({
-            text: `What is ${a} ${op} ${b}?`,
-            emoji: VISUALS[op],
-            countA: a,
-            countB: b,
-            opSymbol: op,
-            correct: ans,
-            options: [ans, ans+1, ans-1, ans+2].sort(() => Math.random() - 0.5)
-        });
+        questions.push({ text: `What is ${a} ${sym} (${b})?`, correct: ans, options: [ans, ans+2, ans-2, ans*-1].sort(() => Math.random() - 0.5) });
     }
 }
 
 function renderQuestion() {
     const q = questions[currentQuestionIndex];
     const container = document.getElementById('quizContent');
-    
-    let visualHtml = `<div class="example-box">`;
-    if (q.opSymbol === '÷') {
-        visualHtml += `Share ${q.emoji.repeat(q.countA)} into ${q.countB} groups!`;
-    } else {
-        visualHtml += `${q.emoji.repeat(q.countA)} ${q.opSymbol} ${q.emoji.repeat(q.countB)}`;
-    }
-    visualHtml += `</div>`;
-
     container.innerHTML = `
-        <div class="intro-card">
-            <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--mid); margin-bottom:10px;">
-                <span>Quest: ${currentQuestionIndex + 1}/100</span>
-                <span style="color:var(--coral)">Score: ${score}</span>
+        <div class="intro-card" style="text-align:center;">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:15px; color:var(--mid);">
+                <span>Challenge: ${currentQuestionIndex + 1}/100</span>
+                <span>Score: <span style="color:var(--sky)">${score}</span></span>
             </div>
-
-            <h2 style="font-size:2rem; margin-bottom:10px;">${q.text}</h2>
-            ${visualHtml}
-            
-            <div id="optionsGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                ${q.options.map(opt => `
-                    <button class="start-btn" style="margin:0; padding:15px; font-size:20px;" onclick="checkAnswer(${opt}, this)">${opt}</button>
-                `).join('')}
+            <h2 style="font-size:2.8rem; margin-bottom:20px;">${q.text}</h2>
+            <div id="optGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                ${q.options.map(o => `<button class="start-btn" style="margin:0; padding:20px;" onclick="check(${o}, this)">${o}</button>`).join('')}
             </div>
-
-            <div id="feedbackMsg" style="margin-top:20px; font-size:1.5rem; font-weight:bold; min-height:40px;"></div>
+            <div id="msg" style="margin-top:25px; font-size:1.6rem; font-weight:bold; min-height:45px;"></div>
         </div>
     `;
 }
 
-function checkAnswer(val, btnElement) {
-    const feedback = document.getElementById('feedbackMsg');
-    const buttons = document.querySelectorAll('#optionsGrid button');
-    const correctAns = questions[currentQuestionIndex].correct;
-
-    buttons.forEach(btn => btn.disabled = true);
-
-    if (Number(val) === correctAns) {
-        score++;
-        feedback.innerHTML = "<span style='color:#4ecdc4;'>🌟 Correct! Great job!</span>";
-        btnElement.style.background = "#4ecdc4";
+function check(val, btn) {
+    const msg = document.getElementById('msg');
+    const correct = questions[currentQuestionIndex].correct;
+    document.querySelectorAll('#optGrid button').forEach(b => b.disabled = true);
+    if (Number(val) === correct) {
+        score++; msg.innerHTML = "<span style='color:var(--sky)'>✨ Brilliant!</span>"; btn.style.background = "var(--sky)";
     } else {
-        feedback.innerHTML = `<span style='color:#ff6b6b;'>❌ Not quite! It was ${correctAns}</span>`;
-        btnElement.style.background = "#ff6b6b";
+        msg.innerHTML = `<span style='color:var(--coral)'>❌ It was ${correct}</span>`; btn.style.background = "var(--coral)";
     }
-
     setTimeout(() => {
         currentQuestionIndex++;
-        if (currentQuestionIndex < 100) {
-            renderQuestion();
-        } else {
+        if (currentQuestionIndex < 100) renderQuestion();
+        else {
             document.getElementById('quizContent').innerHTML = `
-                <div class="intro-card">
-                    <h1>Adventure Complete! 🏆</h1>
-                    <p style="font-size:2rem; margin: 20px 0;">Final Score: ${score} / 100</p>
+                <div class="intro-card" style="text-align:center;">
+                    <h1>Mission Complete! 🏆</h1>
+                    <p style="font-size:2rem; margin:20px;">Score: ${score}/100</p>
                     <button class="start-btn" onclick="location.reload()">Play Again</button>
                 </div>`;
         }
     }, 1200);
 }
 </script>
-
 </body>
 </html>
